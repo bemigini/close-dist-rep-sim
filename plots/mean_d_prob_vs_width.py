@@ -92,7 +92,7 @@ def make_combined_dist_and_rep_vs_width_plot(
     ax1.set_xlabel('width', fontsize = fontsize)
     ax2.set_xlabel('width', fontsize = fontsize)
     ax1.set_ylabel(r'mean $d^{\lambda}_{\mathrm{LLV}}$', fontsize = fontsize)
-    ax2.set_ylabel(r'mean $\max d_{\mathrm{SVD}}$', fontsize = fontsize)
+    ax2.set_ylabel(r'mean $d_{\mathbf{f},\mathbf{g}}$', fontsize = fontsize)
     ax2.yaxis.set_label_position("right")
     ax2.legend(fontsize = fontsize)
     ax1.tick_params(axis='both', which='major', labelsize=fontsize-2)
@@ -113,6 +113,8 @@ def plot_mean_d_prob_vs_width_synthetic() -> None:
     """
     dpi = get_dpi()
     figure_folder = get_figure_folder()
+    if figure_folder not in os.listdir():
+        os.mkdir(figure_folder)
     result_folder = 'results'
     model_type = 'SmallMLP'
 

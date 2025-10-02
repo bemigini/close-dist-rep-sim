@@ -42,7 +42,10 @@ def get_illustration_synthetic_train_data(num_classes: int) -> None:
     classes = class_train_dataset.targets
 
     file_name = f'train_data_illustration_cls{num_classes}'
-    file_path = os.path.join(get_figure_folder(), file_name)
+    figure_folder = get_figure_folder()
+    if figure_folder not in os.listdir():
+        os.mkdir(figure_folder)
+    file_path = os.path.join(figure_folder, file_name)
     dpi = get_dpi()
 
     fig, ax = plt.subplots(figsize=(6, 6))

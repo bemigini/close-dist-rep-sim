@@ -25,6 +25,8 @@ def plot_constructed_model_examples():
     """ Make constructed models and plot examples of distances """
     fontsize = 18
     figure_folder = get_figure_folder()
+    if figure_folder not in os.listdir():
+        os.mkdir(figure_folder)
     dpi = get_dpi()
     plt.rcParams.update({
         "text.usetex": True,

@@ -103,6 +103,8 @@ def plot_cifar_loss_diff_vs_mcca(final_dimensions:List[int]):
     result_folder = 'results'
 
     figure_folder = get_figure_folder()
+    if figure_folder not in os.listdir():
+        os.mkdir(figure_folder)
     dpi = get_dpi()
     colour_to_use = '#002347'
     fontsize = 18

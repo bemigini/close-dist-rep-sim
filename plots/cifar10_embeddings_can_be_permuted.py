@@ -45,6 +45,8 @@ def cifar_embs_can_permute_plots():
     """
     dpi = get_dpi()
     figure_folder = get_figure_folder()
+    if figure_folder not in os.listdir():
+        os.mkdir(figure_folder)
     fontsize = 18
     plt.rcParams.update({
         "text.usetex": True,

@@ -29,6 +29,8 @@ def plot_KL_vs_d_rep_synthetic() -> None:
     """
     dpi = get_dpi()
     figure_folder = get_figure_folder()
+    if figure_folder not in os.listdir():
+        os.mkdir(figure_folder)
     result_folder = 'results'
     model_type = 'SmallMLP'
 
