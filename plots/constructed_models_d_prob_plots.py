@@ -68,7 +68,7 @@ def plot_constructed_model_examples():
         ax.plot(possible_distances, bound, label = 'bound')
         ax.scatter(bound_valid_distances, np.maximum(max_d_rep_f, max_d_rep_g)[bound_valid_filt], s=12)
         ax.set_xlabel(r'$d^{\lambda}_{\mathrm{LLV}}$', fontsize = fontsize)
-        ax.set_ylabel(r'$\max d_{\mathrm{SVD}}$', fontsize = fontsize)
+        ax.set_ylabel(r'$d_{\mathbf{f},\mathbf{g}}$', fontsize = fontsize)
         ax.legend(fontsize = fontsize)
         ax.tick_params(axis='both', which='major', labelsize=fontsize-2)
         fig.tight_layout()
