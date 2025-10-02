@@ -1,0 +1,10 @@
+{
+    "random_seed": 0,
+    "dataset_name": "radial_classification",
+    "num_points": 20000,
+    "num_classes": 6,
+    "equal_weighting_classes": false,
+    "min_length": 0,
+    "dist_scale": 0,
+    "vert_dist_scale": 0
+}

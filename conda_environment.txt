@@ -1,0 +1,27 @@
+Installing close-dist environment on cpu only machine:
+
+conda create -n close-dist python=3.11
+
+conda activate close-dist
+
+conda install pytorch torchvision torchaudio cpuonly -c pytorch
+
+conda install matplotlib docopt h5py scikit-learn tqdm scipy sympy pandas
+
+
+
+Installing close-dist environment on GPU machine:
+
+conda create -n close-dist python=3.11
+
+conda activate close-dist
+
+conda install pytorch torchvision torchaudio pytorch-cuda=12.4 -c pytorch -c nvidia
+
+conda install matplotlib docopt h5py scikit-learn tqdm scipy sympy pandas
+
+
+
+
+
+

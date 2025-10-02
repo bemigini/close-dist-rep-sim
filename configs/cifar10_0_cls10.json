@@ -1,0 +1,10 @@
+{
+    "random_seed": 0,
+    "dataset_name": "cifar10",
+    "num_points": 50000,
+    "num_classes": 10,
+    "equal_weighting_classes": false,
+    "min_length": 0,
+    "dist_scale": 0,
+    "vert_dist_scale": 0
+}
