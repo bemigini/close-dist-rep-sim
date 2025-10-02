@@ -1,5 +1,7 @@
 # When Does Closeness in Distribution Imply Representational Similarity? An Identifiability Perspective
-Code for experiments and plots for the article: ["When Does Closeness in Distribution Imply Representational Similarity? An Identifiability Perspective"](https://arxiv.org/abs/2506.03784) by Beatrix M. G. Nielsen, Emanuele Marconato, Andrea Dittadi and Luigi Gresele, accepted for NeurIPS 2025.   
+Code for experiments and plots for the article: ["When Does Closeness in Distribution Imply Representational Similarity? An Identifiability Perspective"](https://arxiv.org/abs/2506.03784) by Beatrix M. G. Nielsen, Emanuele Marconato, Andrea Dittadi and Luigi Gresele, accepted for NeurIPS 2025.
+
+[![DOI](https://zenodo.org/badge/1066371626.svg)](https://doi.org/10.5281/zenodo.17249361)
 
 
 ## Description
