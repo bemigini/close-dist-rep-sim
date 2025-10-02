@@ -96,7 +96,7 @@ For making the plots use
 ```
 run.py make-plot --plot-type=<string>
 ``` 
-usig the relevant plot-type. See possible plot types in the "Plots" section below. 
+using the relevant plot-type. See possible plot types in the "Plots" section below. 
 
 
 
