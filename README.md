@@ -7,7 +7,7 @@ Code for experiments and plots for the article: ["When Does Closeness in Distrib
 ## Description
 Training models, calculating distances and generating plots can be done through run.py. See the "Usage" section  below for details.
 
-Note that some of the code for creating plots requires trained models or pre-computed distances. 
+Note that some of the code for creating plots requires trained models or pre-computed distances. This means that for example models on the CIFAR-10 dataset will need to be trained before the plots using them can be generated. On a laptop with an NVIDIA RTX A2000 GPU, this takes about 2 hours per model. 
 
 Some checkpoints from models on synthetic data have been included as examples in the "checkpoints" folder. 
 
