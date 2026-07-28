@@ -9,7 +9,8 @@ Usage:
     run.py get-distances --date-str=<string> --dataset-config=<file> --model-var-config=<file> --train-config=<file> --layer-size=<List> --num-classes=<int> --dist-type=<str> [options]
     run.py get-accuracies --date-str=<string> --layer-size=<List> --num-classes=<int> [options]
     run.py make-plot --plot-type=<string> [options]
-    
+    run.py cal-mcca --final-dim=<int> [options]
+
 Options:
     -h --help                               show this screen.
     --output-folder=<file>                  folder to save trained model(s) in
@@ -34,13 +35,14 @@ Options:
     --continue-from=<int>                   continue from checkpoint with number of steps [default: 0]
     --plot-type=<string>                    the type of the plot to make. Can be: 'cifar10_reps', 'd_LLV_constructed', 'd_LLV_train_synthetic', 'd_LLV_vs_width', 'synthetic_data' or 'KL_table'   
     --use-train                             use training set to calculate distances. If not set will use test set.
+    --final-dim                             final dimension of the CIFAR-10 models to calculate mCCA between
     --cuda                                  use GPU 
     
 """
 
 
 
-from datetime import datetime 
+from datetime import datetime
 
 import logging
 
@@ -69,6 +71,7 @@ from src.util import TargetType
 from experiments import prob_distances
 from experiments import get_and_save_model_accuracies
 from experiments import kl_to_zero_dissimilar_reps
+from experiments import measure_cca_for_cifar_models
 
 
 
@@ -88,25 +91,25 @@ def train_variations(args:Dict) -> None:
 
     output_folder = args['--output-folder'] if args['--output-folder'] else '.'
 
-    date_str = args['--date-str'] if args['--date-str'] else ''  
+    date_str = args['--date-str'] if args['--date-str'] else ''
     device = 'cuda' if args['--cuda'] else 'cpu'
     logging.info('The available device is %s', device)
     logging.info('train_models')
 
     overwrites = {}
-    train_seed = int(args['--train-seed']) if args['--train-seed'] else -1    
+    train_seed = int(args['--train-seed']) if args['--train-seed'] else -1
     epochs = int(args['--train-epochs']) if args['--train-epochs'] else 0
     lr = float(args['--lr']) if args['--lr'] else -1
     weight_decay = float(args['--weight-decay']) if args['--weight-decay'] else 0.
 
     if train_seed > -1:
-        overwrites['train_seed'] = train_seed    
+        overwrites['train_seed'] = train_seed
     if epochs > 0:
         overwrites['num_epochs'] = epochs
     if lr > 0:
         overwrites['lr'] = lr
     if weight_decay > 0:
-        overwrites['weight_decay'] = weight_decay        
+        overwrites['weight_decay'] = weight_decay
 
     # Load train config from json
     train_json_dict = load_json(train_config_path)
@@ -132,9 +135,9 @@ def train_variations(args:Dict) -> None:
         for current_length_gs in model_var_config.fix_length_gs:
             for current_length_fs in model_var_config.fix_length_fs:
                 model_config = ModelConfig(
-                    model_var_config.random_seeds[0], 
-                    model_var_config.model_type, 
-                    TargetType[model_var_config.target_type], 
+                    model_var_config.random_seeds[0],
+                    model_var_config.model_type,
+                    TargetType[model_var_config.target_type],
                     model_var_config.nonlinearity,
                     model_var_config.num_classes,
                     current_num_features,
@@ -142,19 +145,19 @@ def train_variations(args:Dict) -> None:
                     current_length_gs,
                     current_length_fs
                 )
-    
+
                 if date_str != '':
                     use_date = date_str
                 else:
                     use_date = datetime.today().strftime('%Y-%m-%d')
-                
+
                 train_models(
                     model_var_config.random_seeds,
                     model_config, train_config, dataset_config,
-                    use_date, continue_from_step=continue_from_step, 
-                    checkpoint_folder=output_folder, 
+                    use_date, continue_from_step=continue_from_step,
+                    checkpoint_folder=output_folder,
                     metrics_folder='', device=device)
-    
+
     logging.info('train_models end')
 
 
@@ -176,7 +179,7 @@ def get_distances(args:Dict) -> None:
 
     if dist_type not in ['max', 'mean']:
         raise ValueError(f'Unknown distance type: {dist_type}')
-    
+
     model_config_path = args['--model-var-config'] if args['--model-var-config'] else ''
     train_config_path = args['--train-config'] if args['--train-config'] else ''
     dataset_config_path = args['--dataset-config'] if args['--dataset-config'] else ''
@@ -194,7 +197,7 @@ def get_distances(args:Dict) -> None:
             model_var_config_path=model_config_path, 
             dataset_config_path = dataset_config_path,
             train_config_path=train_config_path)
-    
+
     logging.info('get_d_prob_between_models end')
 
 
@@ -209,7 +212,7 @@ def get_accuracies(args:Dict) -> None:
     use_train = True if args['--use-train'] else False
 
     extra_suff = args['--extra-suff'] if args['--extra-suff'] else ''
-    
+
     model_config_path = args['--model-var-config'] if args['--model-var-config'] else ''
     train_config_path = args['--train-config'] if args['--train-config'] else ''
     dataset_config_path = args['--dataset-config'] if args['--dataset-config'] else ''
@@ -234,9 +237,9 @@ def make_plot(args:Dict) -> None:
 
     if plot_type == '':
         raise ValueError('Plot type must be given')
-    
+
     logging.info('making plot %s', plot_type)
-    
+
     match plot_type:
         case 'cifar10_reps':
             plots.cifar10_embeddings_can_be_permuted.cifar_embs_can_permute_plots()
@@ -261,25 +264,35 @@ def make_plot(args:Dict) -> None:
             print()
         case _:
             raise ValueError(f'Plot type not recognized: {plot_type}')
-    
+
     logging.info('making plot %s end', plot_type)
-        
+
+
+def calculate_mcca_for_cifar_models(args:Dict) -> None:
+    """ Calculate mCCA of CIFAR-10 model representations and save to json """
+    date_str = args['--date-str'] if args['--date-str'] else ''
+    device = 'cuda' if args['--cuda'] else 'cpu'
+    final_dimension = args['--final-dim'] if args['--final-dim'] else 2
+
+    measure_cca_for_cifar_models.get_and_save_mcca_for_cifar_models(
+        final_dimension=final_dimension, device=device, date_str=date_str)
+
 
 def main():     
     """ Set logging and call relevant function """
     args = docopt(__doc__)
-    
+
     log_level = args['--log'] if args['--log'] else ''
-    
+
     numeric_level = getattr(logging, log_level.upper(), None)
     if not isinstance(numeric_level, int):
         raise ValueError(f'Invalid log level: {log_level}')
-    
+
     logging.basicConfig(format='%(asctime)s - %(message)s',
                         datefmt='%Y-%m-%d %H:%M:%S',
-                        level=numeric_level)   
-    
-    
+                        level=numeric_level)
+
+
     if args['train-variations']:
         train_variations(args)
     elif args['get-distances']:
@@ -288,10 +301,11 @@ def main():
         get_accuracies(args)
     elif args['make-plot']:
         make_plot(args)
+    elif args['cal-mcca']:
+        calculate_mcca_for_cifar_models(args)
     else:
         raise RuntimeError('invalid run mode')
 
 
 if __name__ == '__main__':
     main()
-    

@@ -18,6 +18,7 @@ from src.config.dataset_config import DatasetConfig
 from src.config.model_config import ModelVariationsConfig, ModelConfig
 from src.config.train_config import TrainConfig
 from src.data.data_init import initialize_dataset
+from src.util import TargetType
 
 from src.file_handling.save_load_json import load_json, save_as_json
 
@@ -43,7 +44,7 @@ def get_representations_from_models(model1, model2, dataset):
     f_2_reps = torch.cat(f2_reps_list)
 
     possible_targets_oh = model1.possible_targets_oh
-    
+
     with torch.no_grad():
         g_1_reps = model1.get_g_reps(possible_targets_oh)
         g_2_reps = model2.get_g_reps(possible_targets_oh)
@@ -53,13 +54,15 @@ def get_representations_from_models(model1, model2, dataset):
 
 def get_mcca_scores_cifar_models(
         final_dimension: int, batch_size: int, device: str,
-        file_path: str):
+        file_path: str, date_str: str = '2025-04-22'):
     """
     
     Get the mean canonical correlation scores between embeddings and unembeddings
     for models trained on CIFAR-10.
 
     """
+    if date_str == '':
+        date_str = '2025-04-22'
 
     model_var_config_path = f'configs/model_variations_config_resnetcifar10_128_fd{final_dimension}.json'
     model_json_dict = load_json(model_var_config_path)
@@ -79,7 +82,6 @@ def get_mcca_scores_cifar_models(
 
 
     checkpoint_folder = 'checkpoints'
-    date_str = '2025-04-22'
 
     if os.path.exists(file_path):
         mcca_dict = load_json(file_path)
@@ -96,8 +98,8 @@ def get_mcca_scores_cifar_models(
         print(f'Seed 1: {current_seed1}')
         model_config1 = ModelConfig(
             current_seed1, 
-            model_var_config.model_type, 
-            model_var_config.target_type, 
+            model_var_config.model_type,
+            TargetType[model_var_config.target_type],
             model_var_config.nonlinearity,
             model_var_config.num_classes,
             model_var_config.num_features[0],
@@ -116,14 +118,14 @@ def get_mcca_scores_cifar_models(
             current_comparison = f'{current_seed1}vs{current_seed2}'
             if current_comparison in mcca_dict['model_seeds']:
                 print(f'Comparison already in dict: {current_comparison}')
-                continue           
-            
+                continue
+
             mcca_dict['model_seeds'].append(f'{current_seed1}vs{current_seed2}')
 
             model_config2 = ModelConfig(
-                current_seed2, 
-                model_var_config.model_type, 
-                model_var_config.target_type, 
+                current_seed2,
+                model_var_config.model_type,
+                TargetType[model_var_config.target_type],
                 model_var_config.nonlinearity,
                 model_var_config.num_classes,
                 model_var_config.num_features[0],
@@ -173,18 +175,18 @@ def get_mcca_scores_cifar_models(
             mcca_dict['train_g_mcca'].append(train_g_mcca)
             mcca_dict['test_f_mcca'].append(test_f_mcca)
             mcca_dict['test_g_mcca'].append(test_g_mcca)
-        
+
         save_as_json(mcca_dict, file_path)
 
     return mcca_dict
 
 
-def get_and_save_mcca_for_cifar_models(final_dimension, device):
+def get_and_save_mcca_for_cifar_models(final_dimension, device, date_str: str):
     """
     Get and save mean canonical correlations for CIFAR-10 models with the given 
     representational dimension. 
     """
-    
+
     file_name = f'mcca_cifar_fd{final_dimension}.json'
 
     result_folder = 'results'
@@ -192,7 +194,6 @@ def get_and_save_mcca_for_cifar_models(final_dimension, device):
 
     batch_size=32
     mcca_dict = get_mcca_scores_cifar_models(
-        final_dimension, batch_size, device, file_path=file_path)
+        final_dimension, batch_size, device, file_path=file_path, date_str=date_str)
 
     save_as_json(mcca_dict, file_path)
-
