@@ -3,6 +3,8 @@ results/*
 downloaded_data/*
 testing.py
 .vscode/
+checkpoints/*cifar10*
+metrics/*
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

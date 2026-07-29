@@ -4,7 +4,7 @@ For training models
 
 """
 
-import logging 
+import logging
 import os
 from typing import List
 
@@ -29,7 +29,7 @@ from src.util import convert_one_hot_to_ints, convert_int_targets_to_one_hot
 def get_checkpoint_folder():
     """ Get the name of the folder used for checkpoints """
     return 'checkpoints'
-    
+
 
 def get_metrics_folder():
     """ Get the name of the folder used for metrics """
@@ -41,8 +41,8 @@ def train_models(
     model_config: ModelConfig,
     train_config: TrainConfig,
     dataset_config: DatasetConfig,
-    date_str_use: str, 
-    continue_from_step: int, 
+    date_str_use: str,
+    continue_from_step: int,
     checkpoint_folder: str, metrics_folder: str,
     device: str):
     """ Train models for the given seeds"""
@@ -50,6 +50,9 @@ def train_models(
         checkpoint_folder = get_checkpoint_folder()
     if metrics_folder == '':
         metrics_folder = get_metrics_folder()
+
+    os.makedirs(checkpoint_folder, exist_ok=True)
+    os.makedirs(metrics_folder, exist_ok=True)
 
     train_loader, test_loader = initialize_dataset(dataset_config, train_config.batch_size)
 
@@ -59,10 +62,10 @@ def train_models(
 
         trained_model_file_name = name.get_trained_model_name(
             train_config.dataset_name,
-            model_config.num_classes, current_seed, 
-            model_config.num_features, 
-            model_config.rep_dim, dataset_config.num_points, 
-            train_config.learning_rate, train_config.train_steps, 
+            model_config.num_classes, current_seed,
+            model_config.num_features,
+            model_config.rep_dim, dataset_config.num_points,
+            train_config.learning_rate, train_config.train_steps,
             model_config.model_type,
             fix_fs=model_config.fix_length_fs, fix_gs=model_config.fix_length_gs)
         trained_model_file_name = date_str_use + trained_model_file_name
@@ -99,7 +102,7 @@ def train_models(
                 model_config, train_config, date_str_use, current_seed, checkpoint_folder)
 
             train_steps = train_config.train_steps
-        
+
 
         train_losses, test_losses = tr.train(
                     train_loader, test_loader,
@@ -119,7 +122,7 @@ def train_models(
         torch.save(current_model.state_dict(), trained_file_path)
 
         all_test_targets = []
-        all_final_preds = [] 
+        all_final_preds = []
         for current_test_data in test_loader:
             # get the inputs; data is a list of [inputs, labels]
             inputs, labels = current_test_data
@@ -137,10 +140,10 @@ def train_models(
                 current_int_labels = current_labels
             all_test_targets.extend(current_int_labels)
             all_final_preds.extend(current_preds.detach().cpu().numpy())
-                
+
         all_test_targets = np.array(all_test_targets)
         all_final_preds = np.array(all_final_preds)
-        
+
         correct_final_preds = np.sum(all_test_targets == all_final_preds)
-        final_accuracy = correct_final_preds/len(all_test_targets) 
+        final_accuracy = correct_final_preds/len(all_test_targets)
         print(f'Final test accuracy: {final_accuracy}')

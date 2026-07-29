@@ -24,7 +24,7 @@ from src.models.resnet import ResNet18
 
 
 
-def initialize_model(model_config: ModelConfig) -> torch.nn.Module:
+def initialize_model(model_config: ModelConfig) -> ModelClass:
     """ Initialize a model from config """
     match model_config.model_type:
         case 'SmallMLP':

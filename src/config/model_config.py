@@ -10,7 +10,7 @@ Model config
 
 from dataclasses import dataclass
 
-from typing import List 
+from typing import List
 
 from src.util import TargetType
 
@@ -20,13 +20,13 @@ from src.util import TargetType
 class ModelConfig:
     """ Config class for a model """
     random_seed: int
-    
+
     model_type: str # SmallMLP
 
     target_type: TargetType
     nonlinearity: str
 
-    num_classes: int 
+    num_classes: int
     num_features: int
     rep_dim: int
     fix_length_gs: float
@@ -37,10 +37,10 @@ class ModelConfig:
 class ModelVariationsConfig:
     """ Config class for a number of models """
     random_seeds: List[int]
-    
+
     model_type: str # SmallMLP
 
-    target_type: TargetType
+    target_type: str
     nonlinearity: str
 
     num_classes: int

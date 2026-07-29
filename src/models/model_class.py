@@ -23,7 +23,7 @@ class ModelClass(nn.Module):
     fix_length_gs: float,
     fix_length_fs: float):
         super().__init__()
-        
+
         self.num_targets = num_targets
         self.possible_targets = torch.arange(self.num_targets)
         self.possible_targets_oh = convert_int_targets_to_one_hot(
@@ -36,7 +36,7 @@ class ModelClass(nn.Module):
         self.fix_length_gs = fix_length_gs
         self.fix_length_fs = fix_length_fs
 
-    
+
     def dot(self, features, target):
         """ Dot product of net outputs """
         f_out = self.f_net(features)
@@ -46,7 +46,7 @@ class ModelClass(nn.Module):
             # pylint: disable=not-callable
             g_out = self.fix_length_gs * g_out / (
                 torch.maximum(torch.linalg.norm(g_out, dim = -1, keepdim = True), self.eps))
-        
+
         if self.fix_length_fs > 0:
             # pylint: disable=not-callable
             f_out = self.fix_length_fs * f_out / (
@@ -65,21 +65,21 @@ class ModelClass(nn.Module):
             #                        \sum_{y'\in S} (exp(f_{\theta}(x)^Tg_{\theta}(y')))
             # log(p) = f_{\theta}(x)^Tg_{\theta}(y) - 
             #                   log(\sum_{y'\in S} (exp(f_{\theta}(x)^Tg_{\theta}(y'))))
-        
+
         val = self.dot(features, target).double()
-        
+
         possible_targets_oh = self.possible_targets_oh.to(device) 
         normalisation = torch.zeros(
             (*val.shape, len(possible_targets_oh)), dtype=torch.float64).to(device)
-        
+
         for i, current_target in enumerate(possible_targets_oh):
             n = self.dot(features, current_target.unsqueeze(0)).double()
             normalisation[:, :, :, i] = n 
-        
+
         normalisation = torch.logsumexp(normalisation, dim = 3, keepdim = False)  
         return val - normalisation
 
-    
+
     def forward(self, features, target, device, reduction = 'mean'):
         """ The forward pass. Getting the negative log-likelihood of the model. """        
         log_p = self.log_likelihood_function(features, target.float(), device)
@@ -90,7 +90,7 @@ class ModelClass(nn.Module):
             return -(log_p.sum())
         else:
             raise ValueError(f'reduction should be either "mean" or "sum", reduction: {reduction} ')
-        
+
 
     def predict_targets(self, features, device):
         """ Predicting the targets from the features """
@@ -107,7 +107,7 @@ class ModelClass(nn.Module):
         target_likelihoods = torch.reshape(log_p, (num_preds, self.num_targets))
 
         preds = torch.argmax(target_likelihoods, dim = -1)
-        
+
         return preds
 
 
@@ -119,14 +119,14 @@ class ModelClass(nn.Module):
             # pylint: disable=not-callable
             g_out = self.fix_length_gs * g_out / (
                 torch.maximum(torch.linalg.norm(g_out, dim = -1, keepdim = True), self.eps))
-        
+
         return g_out
-    
+
 
     def get_f_reps(self, features):
         """ Get model embeddings """
         f_out = self.f_net(features)
-        
+
         if self.fix_length_fs > 0:
             # pylint: disable=not-callable
             f_out = self.fix_length_fs * f_out / (

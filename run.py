@@ -34,8 +34,8 @@ Options:
     --sum-or-max=<str>                      whether to use sum or max between term 1 and 2 in the distance [default: sum]
     --continue-from=<int>                   continue from checkpoint with number of steps [default: 0]
     --plot-type=<string>                    the type of the plot to make. Can be: 'cifar10_reps', 'd_LLV_constructed', 'd_LLV_train_synthetic', 'd_LLV_vs_width', 'synthetic_data' or 'KL_table'   
+    --final-dim=<int>                       final dimension of the CIFAR-10 models to calculate mCCA between
     --use-train                             use training set to calculate distances. If not set will use test set.
-    --final-dim                             final dimension of the CIFAR-10 models to calculate mCCA between
     --cuda                                  use GPU 
     
 """

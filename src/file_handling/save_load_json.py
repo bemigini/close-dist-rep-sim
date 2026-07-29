@@ -5,7 +5,7 @@ save and load json
 """
 
 
-from typing import Callable
+from typing import Callable, Dict
 
 from enum import Enum
 
@@ -38,7 +38,7 @@ def save_as_json(obj: object, save_to: str) -> None:
         f.write(json_str)
 
 
-def load_json(load_from: str) -> str:
+def load_json(load_from: str) -> Dict:
     
     with open(load_from, 'r') as f:
         json_obj = json.load(f)

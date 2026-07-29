@@ -135,12 +135,14 @@ def get_mcca_scores_cifar_models(
             )
 
             model2 = load_trained_model(
-                model_config2, train_config, dataset_config, 
+                model_config2, train_config, dataset_config,
                 date_str, model_config2.random_seed, checkpoint_folder, device)
             model2.eval()
 
             reps = get_representations_from_models(model1, model2, train_dataset)
             f_1_reps, f_2_reps, g_1_reps, g_2_reps = reps
+            f_1_reps = f_1_reps.numpy(force=True)
+            f_2_reps = f_2_reps.numpy(force=True)
 
 
             n_components = rep_dim
@@ -156,9 +158,12 @@ def get_mcca_scores_cifar_models(
             corrs = [np.corrcoef(X_c[:, k], Y_c[:, k])[0, 1] for k in range(n_components)]
             train_g_mcca = np.mean(corrs)
 
+
             reps = get_representations_from_models(model1, model2, test_dataset)
             f_1_reps, f_2_reps, g_1_reps, g_2_reps = reps
-            
+            f_1_reps = f_1_reps.numpy(force=True)
+            f_2_reps = f_2_reps.numpy(force=True)
+
             cca = CCA(n_components=n_components, max_iter=1000)
             cca.fit(f_1_reps, f_2_reps)
             X_c, Y_c = cca.transform(f_1_reps, f_2_reps)
