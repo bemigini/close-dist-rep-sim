@@ -8,7 +8,7 @@ Usage:
     run.py get-distances --date-str=<string> --layer-size=<List> --num-classes=<int> --dist-type=<str> [options]
     run.py get-distances --date-str=<string> --dataset-config=<file> --model-var-config=<file> --train-config=<file> --layer-size=<List> --num-classes=<int> --dist-type=<str> [options]
     run.py get-accuracies --date-str=<string> --layer-size=<List> --num-classes=<int> [options]
-    run.py make-plot --plot-type=<string> [options]
+    run.py make-plot --plot-type=<string> --date-str=<string> [options]
     run.py cal-mcca --final-dim=<int> [options]
 
 Options:
@@ -238,11 +238,13 @@ def make_plot(args:Dict) -> None:
     if plot_type == '':
         raise ValueError('Plot type must be given')
 
+    date_str = args['--date-str'] if args['--date-str'] else ''
+
     logging.info('making plot %s', plot_type)
 
     match plot_type:
         case 'cifar10_reps':
-            plots.cifar10_embeddings_can_be_permuted.cifar_embs_can_permute_plots()
+            plots.cifar10_embeddings_can_be_permuted.cifar_embs_can_permute_plots(date_str)
         case 'd_LLV_constructed':
             plots.constructed_models_d_prob_plots.plot_constructed_model_examples()
         case 'd_LLV_train_synthetic':
@@ -250,7 +252,7 @@ def make_plot(args:Dict) -> None:
         case 'd_LLV_vs_width':
             plots.mean_d_prob_vs_width.plot_mean_d_prob_vs_width_synthetic()
         case 'loss_diff_vs_mcca':
-            plots.loss_diff_vs_mcca.plot_all_cifar_loss_diff_vs_mcca()
+            plots.loss_diff_vs_mcca.plot_all_cifar_loss_diff_vs_mcca(date_str)
         case 'synthetic_data':
             num_classes = int(args['--num-classes']) if args['--num-classes'] else 6
             plots.training_data_illustration.get_illustration_synthetic_train_data(

@@ -4,10 +4,13 @@ Code for experiments and plots for the article: ["When Does Closeness in Distrib
 [![DOI](https://zenodo.org/badge/1066371626.svg)](https://doi.org/10.5281/zenodo.17249361)
 
 
+**EDIT:** To improve reproducibility, we have added an environment.yaml file with specific versions of all packages which can be used to reproduce the results. New trained CIFAR-10 model checkpoints with final dimension 2 using this environment can be downloaded from [zenondo HERE](https://doi.org/10.5281/zenodo.21698734). The embedding and unembedding plots for these models are in the 'figures' folder.
+
+
 ## Description
 Training models, calculating distances and generating plots can be done through run.py. See the "Usage" section  below for details.
 
-Note that some of the code for creating plots requires trained models or pre-computed distances. This means that for example models on the CIFAR-10 dataset will need to be trained before the plots using them can be generated. On a laptop with an NVIDIA RTX A2000 GPU, this takes about 2 hours per model. 
+Note that some of the code for creating plots requires trained models or pre-computed distances. This means that for example models on the CIFAR-10 dataset with final dimension more than 2 will need to be trained before the plots using them can be generated. On a laptop with an NVIDIA RTX A2000 GPU, this takes about 2 hours per model. 
 
 Some checkpoints from models on synthetic data have been included as examples in the "checkpoints" folder. 
 
@@ -23,6 +26,8 @@ The outline of the installation is the following:
 
 **2. Conda install relevant conda packages**
 
+**3. Ensure you have a working LaTeX installation**
+
 In 2. there might be differences depending on your machine and preferences. All relevant commands can also be found in conda_environment.txt. 
 
 **1. Create and activate conda environment**
@@ -33,7 +38,7 @@ conda create -n close-dist python=3.11
 conda activate close-dist
 ```
 
-**2. Conda install relevant conda packages** 
+**2. Conda install relevant conda packages**
 
 Install the relevant packages with the following commands:
 ```
@@ -47,6 +52,12 @@ If you are on a GPU machine use instead with the relevant cuda version:
 ```
 conda install pytorch torchvision torchaudio pytorch-cuda=12.4 -c pytorch -c nvidia
 ```
+
+**3. Ensure you have a working LaTeX installation**
+
+Some of the plots use LaTeX through matplotlib, therefore they will need a working LaTeX intallation. Latex can be for example be installed from here: https://www.tug.org/texlive/. The Helvetica font is required. 
+
+
 
 
 

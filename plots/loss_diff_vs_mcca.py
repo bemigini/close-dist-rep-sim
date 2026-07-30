@@ -24,8 +24,10 @@ from src.training.training_models import get_metrics_folder
 
 from plots.util import get_dpi, get_figure_folder
 
+from src.util import TargetType
 
-def save_final_cifar_loss_to_single_file(final_dimension):
+
+def save_final_cifar_loss_to_single_file(final_dimension: int, date_str: str = '2025-04-22'):
     """
     Save the final train and test loss from the CIFAR-10 models in a single file.
     """
@@ -47,8 +49,6 @@ def save_final_cifar_loss_to_single_file(final_dimension):
     train_json_dict = load_json(train_config_path)
     train_config = TrainConfig(**train_json_dict)
 
-    date_str = '2025-04-22'
-
     loss_dict = {
             'model_seed': [],
             'train_loss': [],
@@ -59,9 +59,9 @@ def save_final_cifar_loss_to_single_file(final_dimension):
     for current_seed in all_seeds:
         print(f'Seed: {current_seed}')
         model_config = ModelConfig(
-            current_seed, 
-            model_var_config.model_type, 
-            model_var_config.target_type, 
+            current_seed,
+            model_var_config.model_type,
+            TargetType[model_var_config.target_type],
             model_var_config.nonlinearity,
             model_var_config.num_classes,
             model_var_config.num_features[0],
@@ -69,18 +69,18 @@ def save_final_cifar_loss_to_single_file(final_dimension):
             model_var_config.fix_length_gs[0],
             model_var_config.fix_length_fs[0]
         )
-    
-    
+
+
         trained_model_file_name = name.get_trained_model_name(
                 train_config.dataset_name,
-                model_config.num_classes, current_seed, 
-                model_config.num_features, 
-                model_config.rep_dim, dataset_config.num_points, 
-                train_config.learning_rate, train_config.train_steps, 
+                model_config.num_classes, current_seed,
+                model_config.num_features,
+                model_config.rep_dim, dataset_config.num_points,
+                train_config.learning_rate, train_config.train_steps,
                 model_config.model_type,
                 fix_fs=model_config.fix_length_fs, fix_gs=model_config.fix_length_gs)
         trained_model_file_name = date_str + trained_model_file_name
-        
+
         metrics_file_name = trained_model_file_name + '_metrics.json'
         metrics_folder = get_metrics_folder()
         metrics_path = os.path.join(metrics_folder, metrics_file_name)
@@ -149,9 +149,9 @@ def plot_cifar_loss_diff_vs_mcca(final_dimensions:List[int]):
         axs[i].set_title(f'{final_dimensions[i]}', fontsize = fontsize)
         axs[i].set_xlabel('embedding mCCA', fontsize = fontsize)
         axs[i].tick_params(axis='both', which='major', labelsize=fontsize-2)
-        
+
     axs[0].set_ylabel('test loss difference', fontsize = fontsize)   
-    
+
 
     fig.tight_layout()
     #fig.show()
@@ -162,7 +162,7 @@ def plot_cifar_loss_diff_vs_mcca(final_dimensions:List[int]):
     plt.close()
 
 
-def plot_all_cifar_loss_diff_vs_mcca():
+def plot_all_cifar_loss_diff_vs_mcca(date_str: str):
     """
     Make all scatter plots of test loss difference vs m_CCA
     """
@@ -173,7 +173,6 @@ def plot_all_cifar_loss_diff_vs_mcca():
         single_file_name = f'loss_cifar_fd{final_dimension}.json'
         single_file_path = os.path.join(result_folder, single_file_name)
         if not os.path.isfile(single_file_path):
-            save_final_cifar_loss_to_single_file(final_dimension)
+            save_final_cifar_loss_to_single_file(final_dimension, date_str)
 
-    plot_cifar_loss_diff_vs_mcca(final_dimensions) 
-    
+    plot_cifar_loss_diff_vs_mcca(final_dimensions)

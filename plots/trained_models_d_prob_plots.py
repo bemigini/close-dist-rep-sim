@@ -38,7 +38,7 @@ def plot_prob_distances_synthetic() -> None:
         "text.usetex": True,
         "font.family": "Helvetica"
     })
-    
+
     rep_dim = 2
     fix_length_gs = [0, 20]
     fix_length_fs = [0, 20]
@@ -46,7 +46,7 @@ def plot_prob_distances_synthetic() -> None:
     num_classes = [4, 6, 10, 18]
     date_strings = ['2025-04-22', '2024-12-06', '2024-12-06', '2025-04-22']
     layer_sizes = [16, 32, 64, 128]
-    
+
     weight = 0.00001
     weight_suff = f'_w{str(weight).replace(".", "_")}'
     data_suff = '_test' 
@@ -56,7 +56,7 @@ def plot_prob_distances_synthetic() -> None:
     all_d_probs = []
     all_max_d_reps = []
 
-    
+
     for i, current_num_classes in tqdm(enumerate(num_classes)):
         date_str = date_strings[i]
         for current_layer_size in layer_sizes:
@@ -68,12 +68,12 @@ def plot_prob_distances_synthetic() -> None:
                         fix_g_suff = ''
                     else:
                         fix_g_suff = f'_g_{current_fix_g_option}'
-                    
+
                     if current_fix_f_option == 0:
                         fix_f_suff = ''
                     else:
                         fix_f_suff = f'_f_{current_fix_f_option}'
-                    
+
                     if sum_or_max == 'sum':
                         sm_suff = ''
                     else:
@@ -100,7 +100,7 @@ def plot_prob_distances_synthetic() -> None:
 
                     all_d_probs.extend(distances)
                     all_max_d_reps.extend(max_d_reps)
-                                    
+
                     distances_ord_filter = np.argsort(distances)
                     idx_count = np.arange(distances.shape[0])
                     distances_ord = distances[distances_ord_filter]
@@ -198,7 +198,7 @@ def plot_prob_distances_synthetic() -> None:
 
 
 
-def plot_prob_distances_cifar() -> None:
+def plot_prob_distances_cifar(date_str: str = '2025-04-22') -> None:
     """
         consider the probability distances 
     """
@@ -212,15 +212,14 @@ def plot_prob_distances_cifar() -> None:
     fix_length_gs = [0, 20]
     fix_length_fs = [0, 20]
 
-    date_str = '2025-04-22'
     layer_sizes = [128]
-    
+
     weight = 0.00001
     weight_suff = f'_w{str(weight).replace(".", "_")}'    
     dist_type = 'max'
     sum_or_max = 'max'
     data_suff = '_test' 
-    
+
     for current_rep_dim in rep_dims:
         all_d_probs = []
         all_max_d_reps = []
@@ -233,12 +232,12 @@ def plot_prob_distances_cifar() -> None:
                         fix_g_suff = ''
                     else:
                         fix_g_suff = f'_g_{current_fix_g_option}'
-                    
+
                     if current_fix_f_option == 0:
                         fix_f_suff = ''
                     else:
                         fix_f_suff = f'_f_{current_fix_f_option}'
-                    
+
                     if sum_or_max == 'sum':
                         sm_suff = ''
                     else:
@@ -265,7 +264,7 @@ def plot_prob_distances_cifar() -> None:
 
                     all_d_probs.extend(distances)
                     all_max_d_reps.extend(max_d_reps)
-                                    
+
                     distances_ord_filter = np.argsort(distances)
                     idx_count = np.arange(distances.shape[0])
                     distances_ord = distances[distances_ord_filter]
